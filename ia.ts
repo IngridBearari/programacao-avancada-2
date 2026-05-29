@@ -1,5 +1,9 @@
-// 1. Sistema de cobrança engessado
-class SistemaCobrancaStripe {
+// 1. Abstração para gateways de pagamento
+interface GatewayPagamento {
+    cobrar(usuarioId: string, valorTokens: number): void;
+}
+
+class SistemaCobrancaStripe implements GatewayPagamento {
     cobrar(usuarioId: string, valorTokens: number): void {
         console.log(`Cobrando R$${valorTokens} via Stripe do usuário ${usuarioId}`);
     }
@@ -7,10 +11,10 @@ class SistemaCobrancaStripe {
 
 // 2. Serviço dedicado à cobrança
 class ServicoCobranca {
-    constructor(private gatewayCobranca: SistemaCobrancaStripe) {}
+    constructor(private gatewayPagamento: GatewayPagamento) {}
 
     registrarCobranca(usuarioId: string, valor: number): void {
-        this.gatewayCobranca.cobrar(usuarioId, valor);
+        this.gatewayPagamento.cobrar(usuarioId, valor);
     }
 }
 
