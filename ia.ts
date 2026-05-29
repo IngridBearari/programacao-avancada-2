@@ -71,9 +71,12 @@ class AssistenteOmniIA {
     }
 }
 
-// 5. Um modelo específico sendo forçado a herdar o que não deve
-class ModeloFocadoEmTexto extends AssistenteOmniIA {
-    constructor(servicoCobranca: ServicoCobranca) {
-        super("ChatGPT-4", servicoCobranca, [new GeradorTexto()]);
+// 5. Um modelo específico expõe apenas o contrato que consegue cumprir
+class ModeloFocadoEmTexto implements GeradorIA {
+    public tipo = "TEXTO";
+    public nomeModelo = "ChatGPT-4";
+
+    gerar(prompt: string): string {
+        return `[${this.nomeModelo}]: Respondendo ao prompt: ${prompt}`;
     }
 }
