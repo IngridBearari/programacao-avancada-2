@@ -112,3 +112,12 @@ class ModeloFocadoEmTexto implements GeradorTextoIA {
         return this.gerarTexto(prompt);
     }
 }
+
+/*
+Justificativas arquiteturais:
+SRP: a cobrança foi isolada em ServicoCobranca, deixando AssistenteOmniIA focada em orquestrar requisições de IA.
+OCP: novos tipos de IA podem ser adicionados criando novas implementações de GeradorIA, sem alterar AssistenteOmniIA.
+LSP: ModeloFocadoEmTexto deixou de herdar de AssistenteOmniIA e passou a expor apenas o contrato que consegue cumprir.
+ISP: os contratos foram divididos em GeradorTextoIA, GeradorImagemIA e GeradorAudioIA, evitando interfaces obrigatórias demais.
+DIP: ServicoCobranca depende da abstração GatewayPagamento, permitindo trocar Stripe por outro gateway sem modificar o serviço.
+*/
