@@ -14,33 +14,57 @@ class ServicoCobranca {
     }
 }
 
-// 3. Contrato para cada tipo de geração de IA
+// 3. Contratos segregados por capacidade
 interface GeradorIA {
     tipo: string;
     gerar(prompt: string): string;
 }
 
-class GeradorTexto implements GeradorIA {
+interface GeradorTextoIA extends GeradorIA {
+    gerarTexto(prompt: string): string;
+}
+
+interface GeradorImagemIA extends GeradorIA {
+    gerarImagem(prompt: string): string;
+}
+
+interface GeradorAudioIA extends GeradorIA {
+    gerarAudio(prompt: string): string;
+}
+
+class GeradorTexto implements GeradorTextoIA {
     public tipo = "TEXTO";
 
-    gerar(prompt: string): string {
+    gerarTexto(prompt: string): string {
         return `[Texto Gerado]: Respondendo ao prompt: ${prompt}`;
     }
-}
-
-class GeradorImagem implements GeradorIA {
-    public tipo = "IMAGEM";
 
     gerar(prompt: string): string {
-        return `[Imagem Gerada]: URL da imagem baseada em: ${prompt}`;
+        return this.gerarTexto(prompt);
     }
 }
 
-class GeradorAudio implements GeradorIA {
-    public tipo = "AUDIO";
+class GeradorImagem implements GeradorImagemIA {
+    public tipo = "IMAGEM";
+
+    gerarImagem(prompt: string): string {
+        return `[Imagem Gerada]: URL da imagem baseada em: ${prompt}`;
+    }
 
     gerar(prompt: string): string {
+        return this.gerarImagem(prompt);
+    }
+}
+
+class GeradorAudio implements GeradorAudioIA {
+    public tipo = "AUDIO";
+
+    gerarAudio(prompt: string): string {
         return `[Áudio Gerado]: Arquivo de voz para: ${prompt}`;
+    }
+
+    gerar(prompt: string): string {
+        return this.gerarAudio(prompt);
     }
 }
 
@@ -72,11 +96,15 @@ class AssistenteOmniIA {
 }
 
 // 5. Um modelo específico expõe apenas o contrato que consegue cumprir
-class ModeloFocadoEmTexto implements GeradorIA {
+class ModeloFocadoEmTexto implements GeradorTextoIA {
     public tipo = "TEXTO";
     public nomeModelo = "ChatGPT-4";
 
-    gerar(prompt: string): string {
+    gerarTexto(prompt: string): string {
         return `[${this.nomeModelo}]: Respondendo ao prompt: ${prompt}`;
+    }
+
+    gerar(prompt: string): string {
+        return this.gerarTexto(prompt);
     }
 }
