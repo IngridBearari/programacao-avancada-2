@@ -121,3 +121,22 @@ LSP: ModeloFocadoEmTexto deixou de herdar de AssistenteOmniIA e passou a expor a
 ISP: os contratos foram divididos em GeradorTextoIA, GeradorImagemIA e GeradorAudioIA, evitando interfaces obrigatórias demais.
 DIP: ServicoCobranca depende da abstração GatewayPagamento, permitindo trocar Stripe por outro gateway sem modificar o serviço.
 */
+
+// Exemplo de uso
+const gatewayPagamento = new SistemaCobrancaStripe();
+const servicoCobranca = new ServicoCobranca(gatewayPagamento);
+
+const assistenteOmni = new AssistenteOmniIA("OmniIA-Pro", servicoCobranca, [
+    new GeradorTexto(),
+    new GeradorImagem(),
+    new GeradorAudio(),
+]);
+
+const modeloTexto = new ModeloFocadoEmTexto();
+
+console.log(modeloTexto.gerarTexto("Explique SOLID em poucas palavras."));
+console.log(new GeradorImagem().gerarImagem("Um robô programando em TypeScript."));
+console.log(new GeradorAudio().gerarAudio("Leia este resumo em voz alta."));
+
+assistenteOmni.processarRequisicaoUsuario("Crie uma resposta curta sobre arquitetura limpa.", "TEXTO");
+assistenteOmni.processarRequisicaoUsuario("Crie uma imagem futurista.", "IMAGEM");
