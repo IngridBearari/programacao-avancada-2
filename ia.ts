@@ -5,19 +5,30 @@ class SistemaCobrancaStripe {
     }
 }
 
-// 2. Interface "Faz-Tudo"
+// 2. Serviço dedicado à cobrança
+class ServicoCobranca {
+    constructor(private gatewayCobranca: SistemaCobrancaStripe) {}
+
+    registrarCobranca(usuarioId: string, valor: number): void {
+        this.gatewayCobranca.cobrar(usuarioId, valor);
+    }
+}
+
+// 3. Interface "Faz-Tudo"
 interface IModelosIA {
     gerarTexto(prompt: string): string;
     gerarImagem(prompt: string): string;
     gerarAudio(prompt: string): string;
 }
 
-// 3. A classe principal que gerencia tudo
+// 4. A classe principal que gerencia os modelos de IA
 class AssistenteOmniIA implements IModelosIA {
     public nomeModelo: string;
+    private servicoCobranca: ServicoCobranca;
 
-    constructor(nomeModelo: string) {
+    constructor(nomeModelo: string, servicoCobranca: ServicoCobranca) {
         this.nomeModelo = nomeModelo;
+        this.servicoCobranca = servicoCobranca;
     }
 
     // Processador central cheio de condicionais
@@ -34,8 +45,7 @@ class AssistenteOmniIA implements IModelosIA {
             throw new Error("Tipo de IA não suportado pelo sistema.");
         }
        
-        // Finaliza cobrando o usuário direto aqui
-        this.registrarCobranca(1.50);
+        this.servicoCobranca.registrarCobranca("user_999", 1.50);
     }
 
     gerarTexto(prompt: string): string {
@@ -50,16 +60,12 @@ class AssistenteOmniIA implements IModelosIA {
         return `[Áudio Gerado]: Arquivo de voz para: ${prompt}`;
     }
 
-    registrarCobranca(valor: number): void {
-        const stripe = new SistemaCobrancaStripe();
-        stripe.cobrar("user_999", valor);
-    }
 }
 
-// 4. Um modelo específico sendo forçado a herdar o que não deve
+// 5. Um modelo específico sendo forçado a herdar o que não deve
 class ModeloFocadoEmTexto extends AssistenteOmniIA {
-    constructor() {
-        super("ChatGPT-4");
+    constructor(servicoCobranca: ServicoCobranca) {
+        super("ChatGPT-4", servicoCobranca);
     }
 
     gerarImagem(prompt: string): string {
